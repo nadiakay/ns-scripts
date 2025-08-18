@@ -20,15 +20,11 @@
 
 
         let cards = document.querySelectorAll('.deckcard');
-        let n = 0;
-        let cardInfo = infos[n];
-        let card = cards[n];
-        let junkButton = cardInfo.querySelector('.deckcard-junk-button');
-        console.log('deckInfo',cardInfo);
-        console.log('card',card);
-        cardInfo.classList.add('show');
-        cardInfo.querySelector('.deckcard-junk-button').focus();
-        let targetCard = card;
+        let cardInfo;
+        let card;
+        let junkButton;
+        let giftButton;
+        let targetCard;
 
         let config = { attributes: true, childList: false, subtree: false };
 
@@ -36,30 +32,41 @@
   //          console.log('lost focus');
     //    };
 
+        let setCard = function() {
+            console.log('setCard() START:');
+            if (n > 4) {return;}
+            cardInfo = infos[n];
+            card = cards[n];
+            junkButton = cardInfo.querySelector('.deckcard-junk-button');
+            giftButton = cardInfo.querySelector('.deckcard-gift-button');
+            cardInfo.classList.add('show')
+            console.log("cardInfo.querySelector('.deckcard-junk-button').",cardInfo.querySelector('.deckcard-junk-button'));
+            cardInfo.querySelector('.deckcard-junk-button').focus();
+            targetCard = card;
+            cardObserver.observe(targetCard, config);
+            console.log('setCard() END');
+            console.log('deckInfo',cardInfo);
+            console.log('card',card);
+        }
+
         let nextCard = function() {
-            console.log('nextCard:');
+            console.log('nextCard() START:');
             console.log('n=,',n);
-                        n++;
-                        cardInfo = infos[n];
-                        card = cards[n];
-                        cardInfo.classList.add('show');
-                        targetCard = card;
-                        junkButton = cardInfo.querySelector('.deckcard-junk-button');
+            if (n > 4) {return;}
+            cardInfo.classList.remove('show');
+            n++;
+            setCard()
             setFocusListener();
-                        cardInfo.querySelector('.deckcard-junk-button').focus();
-                        console.log('activeElement',document.activeElement);
-            console.log('end nextCard');
+            console.log('nextCard END');
             console.log('n=,',n);
         }
 
         let isJunked = function(mutationsList, cardObserver) {
-            console.log('isJunked():');
+            console.log('isJunked() START:');
             console.log('n=,',n);
             for (let mutation of mutationsList) {
                 console.log('type',mutation.type);
                 if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    console.log(`class change!`);
-                    console.log('mutation.target:', mutation.target);
                     if (mutation.target.classList.contains('junked')) {
                         // Perform actions when the class is added
                         console.log('junked!');
@@ -69,33 +76,33 @@
                     // Perform actions based on the attribute mutation
                 }
             }
-            console.log('end isjunked');
+            console.log('isJunked END');
             console.log('n=,',n);
         }
 
         let setFocusListener = function() {
             let cardRef=n;
-            console.log('setFocusListener():');
+            console.log('setFocusListener() START:');
             console.log('n=,',n);
-            junkButton.addEventListener('blur', () => {
+            giftButton.addEventListener('blur', () => {
                 console.log('Element lost focus (blur event)');
 
                 console.log('activeElement',document.activeElement);
                 console.log('junkbutton',junkButton);
-                if (cardRef==n) {
+                if (cardRef==n && junkButton!=document.activeElement & giftButton!=document.activeElement) {
                     nextCard();
                 }
 
             });
-            console.log('end setFocusListener()');
+            console.log('setFocusListener() END');
             console.log('n=,',n);
         }
+        let n = 0;
+        let cardObserver = new MutationObserver(isJunked);
+        setCard();
         setFocusListener();
 
-        let cardObserver = new MutationObserver(isJunked);
-
         //let junkButtonObserver = new MutationObserver(lostFocus);
-        cardObserver.observe(targetCard, config);
         console.log('init');
         console.log('activeElement',document.activeElement);
         //junkButtonObserver.observe(junkButton, config);
