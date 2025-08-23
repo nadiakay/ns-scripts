@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         NsPackJunker
 // @namespace    east-tignutn-script
-// @version      0.1.01
+// @version      0.1.011
 // @description  Speedier junking/gifting after opening a pack
 // @author       east tign
 // @copyright    GPLv3 https://www.gnu.org/licenses/gpl-3.0.html
@@ -40,7 +40,7 @@
             junkButton = cardInfo.querySelector('.deckcard-junk-button');
             giftButton = cardButtons.querySelector('a:nth-of-type(2)');
             //giftButton.setAttribute('target', '_blank');
-            //enable the above if not using gift autocloser
+            //enable the above if not using NsGiftAutoclose
             cardInfo.classList.add('show')
             cardInfo.querySelector('.deckcard-junk-button').focus();
             targetCard = card;
@@ -48,11 +48,12 @@
         }
 
         let nextCard = function() {
-            if (n > 4) {return;}
+            if (n == 4) {window.close();}
             cardInfo.classList.remove('show');
             n++;
             setCard()
-            setFocusListener();
+            setGiftButtonListener();
+            console.log('n',n);
         }
 
         let isJunked = function(mutationsList, cardObserver) {
@@ -66,8 +67,11 @@
             }
         }
 
-        let setFocusListener = function() {
+        let setGiftButtonListener = function() {
             let cardRef=n;
+            giftButton.addEventListener('click', function() {
+                nextCard();
+            });
             giftButton.addEventListener('blur', () => {
                 if (cardRef==n && junkButton!=document.activeElement & giftButton!=document.activeElement) {
                     nextCard();
@@ -75,9 +79,12 @@
 
             });
         }
+
+
         let n = 0;
         let cardObserver = new MutationObserver(isJunked);
         setCard();
-        setFocusListener();
+        setGiftButtonListener();
+        console.log('document.activeElement',document.activeElement);
     }
 })();
