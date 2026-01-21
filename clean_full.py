@@ -2,7 +2,7 @@
 # - run gotIssues, set to Issues Only
 # - grab all lines "<nationName> has over 9 packs, skipping issues>"
 # - add all to full.txt and run clean_full.py
-# - filter puppets sheet by clean_full list
+# - filter puppets sheet by clean_full list: "=FILTER(A2:B<n>, MATCH(A2:A<n>, F2:F<n>, 0))", n=(num+puppets+1)
 
 cleaned_lines = []
 
