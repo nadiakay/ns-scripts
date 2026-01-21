@@ -1,3 +1,9 @@
+# usage:
+# - run gotIssues, set to Issues Only
+# - grab all lines "<nationName> has over 9 packs, skipping issues>"
+# - add all to full.txt and run clean_full.py
+# - filter puppets sheet by clean_full list
+
 cleaned_lines = []
 
 with open("full.txt", "r") as f_r:
